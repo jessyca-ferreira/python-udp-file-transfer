@@ -1,21 +1,53 @@
 import socket
+import select
+from pathlib import Path
 
 BUFFER_SIZE = 1024
-HOST = 'localhost'   # Endereço IP do servidor
-PORT = 3000          # Porta do servidor
-dest = (HOST, PORT)  # Origem para recebimento dos pacotes
+HOST = 'localhost'          # endereço ip do servidor
+PORT = 3000                 # porta do servidor
+FOLDER_PATH = Path('server-files/')
 
-# Instancia um socket UDP
-server= socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-# Associa o socket ao endereço IP e porta do servidor
-server.bind(('localhost', 5000))
+dest = (HOST, PORT)
+origin = ('localhost', 5000)     # endereco de origem do servidor
 
+TIMEOUT = 3
 
-with open("server-files/answer.bin", "wb") as file:
-    while True:
-        packet, _ = server.recvfrom(BUFFER_SIZE)
-        if not packet or packet == b'\x18':
-            break
-        file.write(packet)
+def receive_file(file_name):
+    with open(str(FOLDER_PATH / file_name), 'ab') as file:
+        while True:
+            selection = select.select([server], [], [], TIMEOUT)
+            if selection[0]:
+                data, client_address = server.recvfrom(BUFFER_SIZE)
+                file.write(data)
+            else:
+                server.sendto(('received' + file_name).encode(), client_address)
+                send_file(file_name)
+                break
+            
+def send_file(file_name):
+    file_path = str(FOLDER_PATH / file_name)
+    with open(file_path, 'rb') as file:
+        while True:
+            data = file.read(BUFFER_SIZE)
+            if not data:
+                break
+            if server.sendto(data, dest):
+                data = file.read(BUFFER_SIZE)
+            
 
-server.close()  # Fecha a conexão do socket
+server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+server.bind(origin)
+
+finished = False
+
+while not finished:
+    data, client_address = server.recvfrom(BUFFER_SIZE)
+    if (data.decode() == '\x18'):
+        finished = True
+    else:
+        file_name = data.decode()
+        receive_file(file_name)
+    
+server.close()
+        
+
