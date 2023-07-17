@@ -1,38 +1,63 @@
 import socket
+import select
+from pathlib import Path
 
 BUFFER_SIZE = 1024
-folderPath  = "client-files\\"
-HOST = 'localhost'   # Endereço IP do servidor
-PORT = 5000          # Porta do servidor
-dest = (HOST, PORT)  # Destino para envio dos pacotes
+HOST = 'localhost'
+PORT = 5000
+FOLDER_PATH = Path('client-files/')
+TIMEOUT = 3
 
-def send(fileName):
-    filePath = folderPath + fileName
-    try:
-        with open(filePath, 'rb') as file:
-            while True:
-                packet = file.read(BUFFER_SIZE)
-                if not packet:
-                    break
-                client.sendto(packet, dest)
-    except FileNotFoundError:
-        print("O arquivo especificado não foi encontrado.")
-    except:
-        print("Error")
+dest = (HOST, PORT)     # endereco de destino (servidor)
+origin = ('localhost', 3000)    # endereco do cliente
 
-# Instancia um socket UDP
-client= socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-# Associa o socket ao endereço IP e porta do cliente
-client.bind(('localhost', 3000))
+client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+client.bind(origin)     # associa o cliente a um endereco
 
-print('Para sair use CTRL+X\n')
-
-while True:
-    fileName = input()
-    if (fileName == '\x18'):
-        client.sendto(fileName.encode(), dest)
-        break
+def send_file(file_name):
+    file_path = str(FOLDER_PATH / file_name)
+    client.sendto(file_name.encode(), dest)
     
-    send(fileName)
+    with open(file_path, 'rb') as file:
+        while True:
+            data = file.read(BUFFER_SIZE)
+            if not data:
+                break
+            if client.sendto(data, dest):
+                data = file.read(BUFFER_SIZE)
+        try:
+            received_data, server_adress = client.recvfrom(BUFFER_SIZE)
+            print(received_data.decode())
+            receive_file(received_data.decode())
+        except:
+            pass
+        
+        
+def receive_file(file_name):
+    with open(str(FOLDER_PATH / file_name), 'ab') as file:
+        while True:
+            selection = select.select([client], [], [], TIMEOUT)
+            if selection[0]:
+                data, client_address = client.recvfrom(BUFFER_SIZE)
+                file.write(data)
+            else:
+                break
 
-client.close()  # Fecha a conexão do socket
+print('Para sair, user CTRL+X\n')
+
+sending = True
+while sending:
+    data = input()
+    if data == '\x18':
+        client.sendto(data.encode(), dest)
+        sending = False
+    else:
+        send_file(data)
+        
+
+
+
+ 
+
+client.close()
+
