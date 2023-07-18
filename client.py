@@ -6,13 +6,12 @@ BUFFER_SIZE = 1024
 HOST = 'localhost'
 PORT = 5000
 FOLDER_PATH = Path('client-files/')
-TIMEOUT = 3
+TIMEOUT = 10
 
 dest = (HOST, PORT)     # endereco de destino (servidor)
 origin = ('localhost', 3000)    # endereco do cliente
 
 client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-client.bind(origin)     # associa o cliente a um endereco
 
 def send_file(file_name):
     file_path = str(FOLDER_PATH / file_name)
