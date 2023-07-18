@@ -6,14 +6,14 @@ BUFFER_SIZE = 1024
 HOST = 'localhost'          # endereço ip do servidor
 PORT = 3000                 # porta do servidor
 FOLDER_PATH = Path('server-files/')
+TIMEOUT = 15
 
 dest = (HOST, PORT)
 origin = ('localhost', 5000)     # endereco de origem do servidor
 
-TIMEOUT = 3
 
 def receive_file(file_name):
-    with open(str(FOLDER_PATH / file_name), 'ab') as file:
+    with open(str(FOLDER_PATH / file_name), 'wb') as file:
         while True:
             selection = select.select([server], [], [], TIMEOUT)
             if selection[0]:
@@ -21,17 +21,16 @@ def receive_file(file_name):
                 file.write(data)
             else:
                 server.sendto(('received' + file_name).encode(), client_address)
-                send_file(file_name)
+                send_file(file_name, client_address)
                 break
             
-def send_file(file_name):
+def send_file(file_name, client_adress):
     file_path = str(FOLDER_PATH / file_name)
+
     with open(file_path, 'rb') as file:
-        while True:
-            data = file.read(BUFFER_SIZE)
-            if not data:
-                break
-            if server.sendto(data, dest):
+        data = file.read(BUFFER_SIZE)
+        while data:
+            if server.sendto(data, client_address):
                 data = file.read(BUFFER_SIZE)
             
 
