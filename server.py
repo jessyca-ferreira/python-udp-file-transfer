@@ -1,5 +1,4 @@
 import socket
-import select
 from pathlib import Path
 
 BUFFER_SIZE = 1024
@@ -14,14 +13,13 @@ origin = ('localhost', 5000)     # endereco de origem do servidor
 
 def receive_file(file_name):
     file_path = str(FOLDER_PATH / file_name)
+    packets, client_address = server.recvfrom(BUFFER_SIZE)     # packets = tamanho do arquivo enviado em num de pacotes
+    packets = int(data.decode())
+    
     with open(file_path, 'wb+') as file:
-        while True:
-            selection = select.select([server], [], [], TIMEOUT)
-            if selection[0]:
-                data, client_address = server.recvfrom(BUFFER_SIZE)
-                file.write(data)
-            else:
-                break
+        for i in range(packets):
+            data, client_address = server.recvfrom(BUFFER_SIZE)
+            file.write(data)
             
 def send_file(file_name, client_address):
     file_path = str(FOLDER_PATH / file_name)
