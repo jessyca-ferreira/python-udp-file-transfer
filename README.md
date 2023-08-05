@@ -9,7 +9,9 @@ Todos os arquivos que serão transferidos para o servidor devem estar localizado
 
 O arquivo transferido será então salvo em ```server-files``` e, em seguida, retornado ao cliente com um nome modificado (received + nome_original_do_arquivo), conforme sugestão deixada na especificação do projeto.
 
-**OBS:** O comando CTRL+X, além de fechar o cliente, fecha também o servidor. Entendemos que esse não é o comportamente usual de uma estrutura cliente-servidor, mas seguimos o tutorial postado no classroom da disciplina, onde é sugerido esse método, já que sem isso o servidor poderia ser encerrado somente pelo gerenciador de tarefas, tornando os processos de teste e correção mais lentos.
+**1. OBS:** O comando CTRL+X, além de fechar o cliente, fecha também o servidor. Entendemos que esse não é o comportamente usual de uma estrutura cliente-servidor, mas seguimos o tutorial postado no classroom da disciplina, onde é sugerido esse método, já que sem isso o servidor poderia ser encerrado somente pelo gerenciador de tarefas, tornando os processos de teste e correção mais lentos.
+
+**2. OBS:** Reforçamos que é necessário que os arquivos que serão enviados estejam em ```client-files```, e que ```client-files``` esteja localizado no mesmo diretório dos arquivos ```client.py``` e ```server.py```.
 
 ## Equipe 4
 
