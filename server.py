@@ -19,8 +19,7 @@ def receive():
         data, address = server.rdt_receive()
         message = data[2]
         
-        if message != 'ACK' and message != None:
-            messages.put((message, address))
+        messages.put((message, address))
     except:
         pass
 

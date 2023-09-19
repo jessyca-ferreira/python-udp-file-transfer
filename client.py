@@ -23,57 +23,41 @@ lock = threading.Lock()
 
 def receive():
     while True:
-        if handler.queue[0] == 'receive':
-            try:    
-                data, address = client.rdt_receive()     # tupla (ack, seq, data)
-                message = data[2]            
-                
-                if isinstance(message, tuple):
-                    contato = message[0]
-                    client_address = message[1]
-                    message = message[2]
-                                
-                    contatos[contato] = client_address
-                
-                if message != 'ACK':    
-                    print(message)
-            except:
-                pass
-            finally:
-                handler.queue[0] = 'send'
+        try:    
+            data, address = client.rdt_receive()     # tupla (ack, seq, data)
+            message = data[2]            
+            
+            if isinstance(message, tuple):
+                contato = message[0]
+                client_address = message[1]
+                message = message[2]
+                            
+                contatos[contato] = client_address
+            
+            print(message)
+        except:
+            pass
     
 def get_input():
     while True:
-        if handler.queue[0] == 'send':
-            input_timer = threading.Timer(2.0, set_receive)
-            input_timer.start()
-            try:
-                message = input()              
-            except:
-                pass
-            finally:
-                input_timer.cancel()    
-                print('\033[1A', end='\x1b[2K')     # código ansi que apaga a linha digitada para que apenas a mensagem enviada seja lida no console
-                print('')
-                if message == 'bye':
-                    exit()
-                elif message == 'list':
-                    for name in contatos:
-                        print(name)
-                else:
-                    client.rdt_send(message, destination)
-                handler.queue[0] = 'receive'
-        
-def set_receive():
-    handler.queue[0] = 'receive'
-    
-    
-
+        try:
+            message = input()              
+            print('\033[1A', end='\x1b[2K')     # código ansi que apaga a linha digitada para que apenas a mensagem enviada seja lida no console
+            print('')
+            if message == 'bye':
+                exit()
+            elif message == 'list':
+                for name in contatos:
+                    print(name)
+            else:
+                client.rdt_send(message, destination)
+        except:
+            pass
 
 username = input('Bem vindo! Digite "hi, meu nome eh <nome_do_usuario>" para se conectar\n')
 while not username.startswith('hi, meu nome eh'):
     username = input()
-
+    
 client.rdt_send(username, destination)    
 
 t1 = threading.Thread(target=receive)
