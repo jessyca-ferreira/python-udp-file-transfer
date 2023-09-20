@@ -4,16 +4,16 @@ import threading
 import sys
 import rdt      # importa o canal rdt criado no aquivo rdt.py
 
-LOCALHOST = socket.gethostbyname(socket.gethostname())
-PORT = 5000
-ORIGIN = (LOCALHOST, random.randint(8000, 9999))
+LOCALHOST = socket.gethostbyname(socket.gethostname()) #Endereço de IP local do cliente
+PORT = 5000 #Porta de comunicação
+ORIGIN = (LOCALHOST, random.randint(8000, 9999)) #Tupla com  o LOCALHOST e uma porta de número aleatório entre os valores especificados.
 
-destination = (LOCALHOST, PORT)  
+destination = (LOCALHOST, PORT)
 
-host = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-host.bind(ORIGIN)
+host = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) #Criando um socket UDP utilizando o protocolo de rede IPv4
+host.bind(ORIGIN) #Vincula o socket host criado ao endereço e porta na tupla Origin
 
-client = rdt.RDTChannel(host)
+client = rdt.RDTChannel(host) #
 contatos = {}
 
 def receive():
