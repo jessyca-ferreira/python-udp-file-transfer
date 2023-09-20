@@ -4,7 +4,7 @@
 ## Instruções de execução
 
 * Execute `server.py` para incializar o servidor em uma janela do terminal
-* Execute `client.py` para inicializar o cliente em uma janela do terminar
+* Execute `client.py` para inicializar o cliente em uma janela do terminal
   * A nossa implementação suporta múltiplos clientes. Para inicializar um cliente adicional, basta executar `client.py` em uma janela diferente do terminal
 * No cliente, insira comandos ou mensagens que serão enviadas ao servidor para que este realize o broadcast para todos os clientes conectados
   * Para inciar a conexão, o cliente precisa utilizar o comando "hi, meu nome eh <nome_do_usuario>
