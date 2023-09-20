@@ -4,12 +4,16 @@ import threading
 
 class RDTChannel():
     
+    # implementa o alternating-bit model do RDT 3.0, como mostrado pelo Kurose
+    
     BUFFER_SIZE = 1024
+    lock = threading.Lock()
 
     def __init__(self, host, type='') -> None:
         self.host = host
         self.type = type
         self.active_connections = {}
+        self.state = ''
         self.sndpkt = ''
 
     def rdt_send(self, message, destination):
@@ -45,7 +49,7 @@ class RDTChannel():
                         self.host.settimeout(None)
                         self.active_connections[address]['state'] = 'receive'
                         if self.type == 'SERVER':
-                            print(f'SERVER: RECEBIDO \033[1;3m ACK {self.active_connections[address]["ack"]} \033[0m')
+                            print(f'SERVER: RECEBIDO \033[1;3m ACK {current_ack} \033[0m')
                         self.active_connections[address]['ack'] ^= 1
                         self.active_connections[address]['seq'] ^= 1
                         waiting = False
@@ -59,12 +63,12 @@ class RDTChannel():
                 current_seq = data[1]
                 expected_seq = self.active_connections[address]['seq']
                 if self.type == 'SERVER':
-                    print(f'CLIENTE {address[0]}/{address[1]} ESTÁ ENVIANDO PACOTE \033[1;3m ACK {self.active_connections[address]["ack"]} SEQ {self.active_connections[address]["seq"]} \033[0m')
+                    print(f'CLIENTE {address[0]}/{address[1]} ESTÁ ENVIANDO PACOTE \033[1;3m ACK {data[0]} SEQ {data[1]} \033[0m')
 
                 
                 if (current_seq == expected_seq):
                     if self.type == 'SERVER':
-                        print(f'SERVER: RECEBIDO PACOTE \033[1;3m ACK {self.active_connections[address]["ack"]} SEQ {self.active_connections[address]["seq"]} \033[0m')
+                        print(f'SERVER: RECEBIDO PACOTE \033[1;3m ACK {data[0]} SEQ {data[1]} \033[0m')
                     sndpkt = pickle.dumps((current_seq, current_seq ^ 1, 'ACK'))      # make_pkt com campos (ack, seq, data)
                     self.host.sendto(sndpkt, address)
                     self.active_connections[address]['ack'] ^= 1
