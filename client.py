@@ -1,74 +1,57 @@
 import socket
 import random
 import threading
+import sys
 import rdt      # importa o canal rdt criado no aquivo rdt.py
-import queue
-import time
-
 
 LOCALHOST = socket.gethostbyname(socket.gethostname())
 PORT = 5000
+ORIGIN = (LOCALHOST, random.randint(8000, 9999))
 
 destination = (LOCALHOST, PORT)  
 
 host = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-host.bind((LOCALHOST, random.randint(8000, 9999)))
+host.bind(ORIGIN)
 
 client = rdt.RDTChannel(host)
 contatos = {}
 
-handler = queue.Queue()
-handler.put('receive')
-lock = threading.Lock()
-
 def receive():
     while True:
-        try:    
+        try:
             data, address = client.rdt_receive()     # tupla (ack, seq, data)
             message = data[2]            
             
-            if isinstance(message, tuple):
-                contato = message[0]
-                client_address = message[1]
-                message = message[2]
-                            
-                contatos[contato] = client_address
-            
-            print(message)
-        except:
-            pass
-    
-def get_input():
-    while True:
-        try:
-            message = input()              
-            print('\033[1A', end='\x1b[2K')     # código ansi que apaga a linha digitada para que apenas a mensagem enviada seja lida no console
-            print('')
             if message == 'bye':
-                exit()
-            elif message == 'list':
-                for name in contatos:
-                    print(name)
+                print('Você foi desconectado')
+                host.close()
+                break
+            elif message[0] == 'list':       
+                for x in message[1].split('\n'):
+                    contatos[x[:14]] = x[17:]
+                        
+                print(message[1])
             else:
-                client.rdt_send(message, destination)
+                print(message)
         except:
             pass
-
-username = input('Bem vindo! Digite "hi, meu nome eh <nome_do_usuario>" para se conectar\n')
-while not username.startswith('hi, meu nome eh'):
-    username = input()
     
-client.rdt_send(username, destination)    
+def send():
+    while True:
+        message = input()               
+        client.rdt_send(message, destination)
+        if message == 'bye':
+            break
+
+username = ''
+while not username.startswith('hi, meu nome eh'):
+    username = input('Bem vindo! Digite "hi, meu nome eh <nome_do_usuario>" para se conectar\n')
 
 t1 = threading.Thread(target=receive)
-t2 = threading.Thread(target=get_input)
+t2 = threading.Thread(target=send)
 
 t1.start()
 t2.start()
 
-
-
-
-
-        
+client.rdt_send(username, destination)       
     
