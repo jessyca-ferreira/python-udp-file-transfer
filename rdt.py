@@ -10,7 +10,6 @@ class RDTChannel():
         self.host = host
         self.type = type
         self.active_connections = {}
-        self.state = ''
         self.sndpkt = ''
 
     def rdt_send(self, message, destination):
