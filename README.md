@@ -1,4 +1,4 @@
-# python-rdt-server
+# python-rdt-chat
 **_Observação_**: no vídeo que acompanha esta entrega, _todos_ os membros da equipe participaram do vídeo, na seguinte ordem: Pedro Martins, Letícia Barbosa, Jéssyca Ferreira, Paulo Rafael, Maike Henrique, Beatriz Oliveira.
 
 ## Instruções de execução
