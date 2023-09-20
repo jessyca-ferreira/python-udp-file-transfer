@@ -1,13 +1,12 @@
 import pickle
 import socket
-import threading
 
 class RDTChannel():
     
     # implementa o alternating-bit model do RDT 3.0, como mostrado pelo Kurose
     
     BUFFER_SIZE = 1024
-    lock = threading.Lock()
+
 
     def __init__(self, host, type='') -> None:
         self.host = host
