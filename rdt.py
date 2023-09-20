@@ -5,7 +5,6 @@ import threading
 class RDTChannel():
     
     BUFFER_SIZE = 1024
-    lock = threading.Lock()
 
     def __init__(self, host, type='') -> None:
         self.host = host
