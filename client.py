@@ -10,7 +10,7 @@ ORIGIN = (LOCALHOST, random.randint(8000, 9999)) # tupla com  o LOCALHOST e uma 
 
 destination = (LOCALHOST, PORT)
 
-host = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # criando um socket UDP utilizando o protocolo de rede IPv4
+host = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # criando um socket UDP
 host.bind(ORIGIN)
 
 client = rdt.RDTChannel(host) # cria um canal de comunicação rdt utilizando o socket
