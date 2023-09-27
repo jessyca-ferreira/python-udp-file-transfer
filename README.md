@@ -1,5 +1,4 @@
 # python-rdt-chat
-**_Observação_**: no vídeo que acompanha esta entrega, _todos_ os membros da equipe participaram do vídeo, na seguinte ordem: Pedro Martins, Letícia Barbosa, Jéssyca Ferreira, Paulo Rafael, Maike Henrique, Beatriz Oliveira.
 
 ## Instruções de execução
 
@@ -12,18 +11,3 @@
   * Ao receber ou enviar uma mensagem, será impresso no terminal servidor a etapa do protocolo RDT realizada.
   * Além disso, temos dois comandos especiais: 'bye', responsável por desconectar um cliente, tornando-o incapaz de receber ou enviar mensagens e finalizando sua execução, e 'list', que retorna a lista de conexões ativas
 * O arquivo `rdt.py` não precisa ser executado, pois foi importado em ambos `client.py` e `server.py`
-
-
-## Equipe 4
-
-Beatriz de Oliveira Barros - bob@cin.ufpe.br
-
-Jessyca Ferreira da Silva -	jfs7@cin.ufpe.br
-
-Letícia Barbosa Lins Pedrosa - lblp@cin.ufpe.br
-
-Maike Henrique Rodrigues de Menezes	- mhrm2@cin.ufpe.br
-
-Paulo Rafael Barros de Aguiar	- prba@cin.ufpe.br
-
-Pedro Martins da Silva - pms5@cin.ufpe.br
